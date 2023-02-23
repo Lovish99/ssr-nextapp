@@ -41,7 +41,10 @@ const Add = () => {
         });
 
       toast.success("list added Successfully");
-      router.replace("/");
+
+      setTimeout(() => {
+        router.replace("/");
+      }, 1000);
     }
   };
 
