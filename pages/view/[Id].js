@@ -5,14 +5,11 @@ import db from "../../util/firebase";
 
 //page is created on run time not on build time
 export async function getServerSideProps({ query }) {
-  let records = [];
+  let records = {};
 
   db.child("contacts").on("value", (snapshot) => {
     if (snapshot.val() !== null) {
-      snapshot.forEach((childsnapshot) => {
-        let data = childsnapshot.val();
-        records.push(data);
-      });
+      records = { ...snapshot.val() };
     }
   });
 

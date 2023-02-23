@@ -5,19 +5,16 @@ import Link from "next/link";
 import { useState } from "react";
 
 export async function getServerSideProps() {
-  let records = [];
+  let records = {};
   db.child("contacts").on("value", (snapshot) => {
     if (snapshot.val() !== null) {
-      snapshot.forEach((childsnapshot) => {
-        let data = childsnapshot.val();
-        records.push(data);
-      });
+      records = { ...snapshot.val() };
     }
   });
 
   return {
     props: {
-      todos: records || null,
+      todos: records,
     },
   };
 }
@@ -29,10 +26,10 @@ export default function Home({ todos }) {
     db.child("contacts")
       .orderByChild(`${e.target.value}`)
       .on("value", (snapshot) => {
-        let sortedData = [];
-        snapshot.forEach((snap) => {
-          sortedData.push(snap.val());
-        });
+        let sortedData = {};
+        if (snapshot.val() !== null) {
+          sortedData = { ...snapshot.val() };
+        }
 
         setData(sortedData);
       });
@@ -60,13 +57,10 @@ export default function Home({ todos }) {
         if (err) {
           toast.error(err);
         } else {
-          let records = [];
+          let records = {};
           db.child("contacts").on("value", (snapshot) => {
             if (snapshot.val() !== null) {
-              snapshot.forEach((childsnapshot) => {
-                let data = childsnapshot.val();
-                records.push(data);
-              });
+              records = { ...snapshot.val() };
             }
           });
           setData(records);
@@ -101,7 +95,7 @@ export default function Home({ todos }) {
         </button>
       </div>
       <br />
-      {(data || todos)?.length === 0 ? (
+      {Object.keys(data).length === 0 ? (
         <div
           style={{
             margin: "0 25%",
@@ -132,7 +126,7 @@ export default function Home({ todos }) {
           <tbody>
             {Object.keys(data).map((id, index) => {
               return (
-                <tr key={data[id].idd}>
+                <tr key={id}>
                   <th scope="row">{index + 1}</th>
                   <td>{data[id].name}</td>
                   <td>{data[id].email}</td>
@@ -145,7 +139,7 @@ export default function Home({ todos }) {
                     <button
                       className="btn btn-delete"
                       onClick={() => {
-                        onDelete(data[id].idd);
+                        onDelete(id);
                       }}
                     >
                       Delete

@@ -1,22 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 const Navigation = (props) => {
   const [activeTab, setActiveTab] = useState("Home");
   const router = useRouter();
-  // console.log(router);
-  // console.log(router.pathname);
-
-  // useEffect(() => {
-  //   if (router.pathname === "/") {
-  //     setActiveTab("Home");
-  //   } else if (router.pathname === "/add") {
-  //     setActiveTab("AddContact");
-  //   } else if (router.pathname === "/about") {
-  //     setActiveTab("About");
-  //   }
-  // }, []);
 
   return (
     <div>

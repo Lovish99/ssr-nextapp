@@ -6,14 +6,11 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
 export async function getServerSideProps({ query }) {
-  let records = [];
+  let records = {};
 
   db.child("contacts").on("value", (snapshot) => {
     if (snapshot.val() !== null) {
-      snapshot.forEach((childsnapshot) => {
-        let data = childsnapshot.val();
-        records.push(data);
-      });
+      records = { ...snapshot.val() };
     }
   });
 
@@ -116,9 +113,9 @@ const Update = ({ todos }) => {
       </form>
       <style>
         {`
-  input[type="text"],
-input[type="email"],
-input[type="number"],
+  input[type=text],
+input[type=email],
+input[type=number],
 select {
   width: 100%;
   padding: 12px 20px;
@@ -129,7 +126,7 @@ select {
   box-sizing: border-box;
 }
 
-input[type="submit"] {
+input[type=submit] {
   width: 100%;
   background-color: #4caf50;
   color: white;
@@ -140,7 +137,7 @@ input[type="submit"] {
   cursor: pointer;
 }
 
-input[type="submit"]:hover {
+input[type=submit]:hover {
   background-color: #45a049;
 }
 

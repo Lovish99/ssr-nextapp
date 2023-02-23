@@ -45,26 +45,14 @@ const Add = ({ todos }) => {
     if (!name || !email || !contact || !status) {
       toast.error("Please provide value in each input field");
     } else {
-      console.log(state);
-
-      var newPostRef = db.child("contacts").push(state, (err) => {
+      db.child("contacts").push(state, (err) => {
         if (err) {
           toast.error(err);
         } else {
           toast.success("list added Successfully");
         }
       });
-      var postID = newPostRef.key;
-      let stateVariables = { ...state, idd: postID };
 
-      db.child(`contacts/${postID}`).set(stateVariables, (err) => {
-        if (err) {
-          toast.error(err);
-        } else {
-        }
-      });
-      console.log(stateVariables);
-      console.log(postID);
       setTimeout(() => router.replace("/"), 500);
     }
   };
@@ -124,9 +112,9 @@ const Add = ({ todos }) => {
       </form>
       <style>
         {`
-  input[type="text"],
-input[type="email"],
-input[type="number"],
+  input[type=text],
+input[type=email],
+input[type=number],
 select {
   width: 100%;
   padding: 12px 20px;
@@ -137,7 +125,7 @@ select {
   box-sizing: border-box;
 }
 
-input[type="submit"] {
+input[type=submit] {
   width: 100%;
   background-color: #4caf50;
   color: white;
@@ -148,7 +136,7 @@ input[type="submit"] {
   cursor: pointer;
 }
 
-input[type="submit"]:hover {
+input[type=submit]:hover {
   background-color: #45a049;
 }
 
