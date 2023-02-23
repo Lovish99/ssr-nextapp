@@ -1,20 +1,19 @@
 import { useRouter } from "next/router";
 import React from "react";
 import Link from "next/link";
-import { ref, onValue, getDatabase } from "firebase/database";
-
 import db from "../../util/firebase";
 
 //page is created on run time not on build time
 export async function getServerSideProps({ query }) {
   let records = [];
 
-  const dbRef = ref(getDatabase(db), "contacts");
-  onValue(dbRef, (snapshot) => {
-    snapshot.forEach((childsnapshot) => {
-      let data = childsnapshot.val();
-      records.push(data);
-    });
+  db.child("contacts").on("value", (snapshot) => {
+    if (snapshot.val() !== null) {
+      snapshot.forEach((childsnapshot) => {
+        let data = childsnapshot.val();
+        records.push(data);
+      });
+    }
   });
 
   return {
@@ -27,10 +26,6 @@ export async function getServerSideProps({ query }) {
 const Details = ({ contactDetails }) => {
   const router = useRouter();
   const { Id } = router.query;
-
-  if (!Object.keys(contactDetails).length) {
-    return <div>Invalid ID</div>;
-  }
 
   return (
     <div style={{ marginTop: "150px" }}>

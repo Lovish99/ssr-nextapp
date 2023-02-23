@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { ref, onValue, getDatabase } from "firebase/database";
 
 import db from "../../util/firebase";
 import { toast } from "react-toastify";
@@ -9,12 +8,13 @@ import { useRouter } from "next/router";
 export async function getServerSideProps({ query }) {
   let records = [];
 
-  const dbRef = ref(getDatabase(db), "contacts");
-  onValue(dbRef, (snapshot) => {
-    snapshot.forEach((childsnapshot) => {
-      let data = childsnapshot.val();
-      records.push(data);
-    });
+  db.child("contacts").on("value", (snapshot) => {
+    if (snapshot.val() !== null) {
+      snapshot.forEach((childsnapshot) => {
+        let data = childsnapshot.val();
+        records.push(data);
+      });
+    }
   });
 
   return {
@@ -30,13 +30,13 @@ const Update = ({ todos }) => {
     email: todos.email || "",
     contact: todos.contact || "",
     status: todos.status || "",
+    idd: todos.idd,
   };
 
   const [state, setState] = useState(initialState);
-  const { name, email, contact, status } = state;
+  const { name, email, contact, status, idd } = state;
 
   const router = useRouter();
-  const { Id } = router.query;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -49,16 +49,13 @@ const Update = ({ todos }) => {
     if (!name || !email || !contact || !status) {
       toast.error("Please provide value in each input field");
     } else {
-      db.database()
-        .ref()
-        .child(`contacts/${Id}`)
-        .set(state, (err) => {
-          if (err) {
-            toast.error(err);
-          } else {
-            toast.success("list updated Successfully");
-          }
-        });
+      db.child(`contacts/${idd}`).set(state, (err) => {
+        if (err) {
+          toast.error(err);
+        } else {
+          toast.success("list updated Successfully");
+        }
+      });
 
       setTimeout(() => router.replace("/"), 500);
     }

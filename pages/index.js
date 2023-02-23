@@ -1,5 +1,4 @@
 import React from "react";
-import { ref, onValue, getDatabase } from "firebase/database";
 import db from "../util/firebase";
 import { toast } from "react-toastify";
 import Link from "next/link";
@@ -7,13 +6,13 @@ import { useState } from "react";
 
 export async function getServerSideProps() {
   let records = [];
-
-  const dbRef = ref(getDatabase(db), "contacts");
-  onValue(dbRef, (snapshot) => {
-    snapshot.forEach((childsnapshot) => {
-      let data = childsnapshot.val();
-      records.push(data);
-    });
+  db.child("contacts").on("value", (snapshot) => {
+    if (snapshot.val() !== null) {
+      snapshot.forEach((childsnapshot) => {
+        let data = childsnapshot.val();
+        records.push(data);
+      });
+    }
   });
 
   return {
@@ -27,9 +26,7 @@ export default function Home({ todos }) {
   const [data, setData] = useState(todos);
   const [selected, setSelected] = useState("Please Select");
   const handleChange = (e) => {
-    db.database()
-      .ref()
-      .child("contacts")
+    db.child("contacts")
       .orderByChild(`${e.target.value}`)
       .on("value", (snapshot) => {
         let sortedData = [];
@@ -44,16 +41,13 @@ export default function Home({ todos }) {
   };
 
   const handleReset = () => {
-    db.database()
-      .ref()
-      .child("contacts")
-      .on("value", (snapshot) => {
-        if (snapshot.val() !== null) {
-          setData({ ...snapshot.val() });
-        } else {
-          setData({});
-        }
-      });
+    db.child("contacts").on("value", (snapshot) => {
+      if (snapshot.val() !== null) {
+        setData({ ...snapshot.val() });
+      } else {
+        setData({});
+      }
+    });
 
     setSelected("Please Select");
   };
@@ -62,31 +56,23 @@ export default function Home({ todos }) {
     if (
       window.confirm("Are you sure that you wanted to delete that contact ?")
     ) {
-      let idd = data[id].idd;
-      db.database()
-        .ref()
-        .child(`contacts/${id}`)
-        .remove((err) => {
-          if (err) {
-            console.log(err);
-
-            toast.error(err);
-          } else {
-            toast.success("Contact deleted Successfully");
-          }
-        });
-
-      // let records = [];
-
-      // const dbRef = ref(getDatabase(db), "contacts");
-      // onValue(dbRef, (snapshot) => {
-      //   snapshot.forEach((childsnapshot) => {
-      //     let data = childsnapshot.val();
-      //     records.push(data);
-      //   });
-      // });
-
-      // setData(records);
+      db.child(`contacts/${id}`).remove((err) => {
+        if (err) {
+          toast.error(err);
+        } else {
+          let records = [];
+          db.child("contacts").on("value", (snapshot) => {
+            if (snapshot.val() !== null) {
+              snapshot.forEach((childsnapshot) => {
+                let data = childsnapshot.val();
+                records.push(data);
+              });
+            }
+          });
+          setData(records);
+          toast.success("Contact deleted Succeddfully");
+        }
+      });
     }
   };
 
@@ -115,7 +101,7 @@ export default function Home({ todos }) {
         </button>
       </div>
       <br />
-      {todos?.length === 0 ? (
+      {(data || todos)?.length === 0 ? (
         <div
           style={{
             margin: "0 25%",
@@ -146,7 +132,7 @@ export default function Home({ todos }) {
           <tbody>
             {Object.keys(data).map((id, index) => {
               return (
-                <tr key={id}>
+                <tr key={data[id].idd}>
                   <th scope="row">{index + 1}</th>
                   <td>{data[id].name}</td>
                   <td>{data[id].email}</td>
@@ -159,7 +145,7 @@ export default function Home({ todos }) {
                     <button
                       className="btn btn-delete"
                       onClick={() => {
-                        onDelete(id);
+                        onDelete(data[id].idd);
                       }}
                     >
                       Delete

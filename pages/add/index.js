@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import db from "../../util/firebase";
-import { ref, onValue, getDatabase } from "firebase/database";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
 export async function getServerSideProps() {
   let records = [];
 
-  const dbRef = ref(getDatabase(db), "contacts");
-  onValue(dbRef, (snapshot) => {
-    snapshot.forEach((childsnapshot) => {
-      let data = childsnapshot.val();
-      records.push(data);
-    });
+  db.child("contacts").on("value", (snapshot) => {
+    if (snapshot.val() !== null) {
+      snapshot.forEach((childsnapshot) => {
+        let data = childsnapshot.val();
+        records.push(data);
+      });
+    }
   });
 
   return {
@@ -46,19 +46,25 @@ const Add = ({ todos }) => {
       toast.error("Please provide value in each input field");
     } else {
       console.log(state);
-      let stateVariables = { ...state, idd: `${todos.length + 1}` };
-      console.log(stateVariables);
-      db.database()
-        .ref()
-        .child("contacts")
-        .push(stateVariables, (err) => {
-          if (err) {
-            toast.error(err);
-          } else {
-            toast.success("list added Successfully");
-          }
-        });
 
+      var newPostRef = db.child("contacts").push(state, (err) => {
+        if (err) {
+          toast.error(err);
+        } else {
+          toast.success("list added Successfully");
+        }
+      });
+      var postID = newPostRef.key;
+      let stateVariables = { ...state, idd: postID };
+
+      db.child(`contacts/${postID}`).set(stateVariables, (err) => {
+        if (err) {
+          toast.error(err);
+        } else {
+        }
+      });
+      console.log(stateVariables);
+      console.log(postID);
       setTimeout(() => router.replace("/"), 500);
     }
   };
