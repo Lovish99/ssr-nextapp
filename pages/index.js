@@ -25,6 +25,8 @@ export async function getServerSideProps() {
 
 export default function Home({ todos }) {
   const [data, setData] = useState(todos);
+  console.log(todos);
+  console.log(data);
   const [selected, setSelected] = useState("Please Select");
 
   const handleChange = async (e) => {
@@ -127,7 +129,8 @@ export default function Home({ todos }) {
         </button>
       </div>
       <br />
-      {Object.keys(data && todos).length === 0 ? (
+
+      {Object.keys(data).length === 0 ? (
         <div
           style={{
             margin: "0 25%",
