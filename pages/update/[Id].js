@@ -62,7 +62,9 @@ const Update = ({ todos }) => {
           console.log(error);
         });
 
-      router.replace("/");
+      setTimeout(() => {
+        router.replace("/");
+      }, 1000);
     }
   };
 
