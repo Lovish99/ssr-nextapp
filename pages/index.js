@@ -25,7 +25,7 @@ export async function getServerSideProps() {
 
 export default function Home({ todos }) {
   const [data, setData] = useState(todos);
-
+  const [selected, setSelected] = useState("Please Select");
   const handleChange = (e) => {
     db.database()
       .ref()
@@ -42,8 +42,6 @@ export default function Home({ todos }) {
 
     setSelected(`${e.target.value}`);
   };
-
-  const [selected, setSelected] = useState("Please Select");
 
   const handleReset = () => {
     db.database()
