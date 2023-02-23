@@ -25,8 +25,7 @@ export async function getServerSideProps() {
 
 export default function Home({ todos }) {
   const [data, setData] = useState(todos);
-  console.log(todos);
-  console.log(data);
+
   const [selected, setSelected] = useState("Please Select");
 
   const handleChange = async (e) => {
