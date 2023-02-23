@@ -27,13 +27,16 @@ const Update = ({ todos }) => {
     email: todos.email || "",
     contact: todos.contact || "",
     status: todos.status || "",
-    idd: todos.idd,
   };
 
   const [state, setState] = useState(initialState);
-  const { name, email, contact, status, idd } = state;
+  const { name, email, contact, status } = state;
 
   const router = useRouter();
+
+  const { Id } = router.query;
+
+  console.log(Id);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -46,7 +49,7 @@ const Update = ({ todos }) => {
     if (!name || !email || !contact || !status) {
       toast.error("Please provide value in each input field");
     } else {
-      db.child(`contacts/${idd}`).set(state, (err) => {
+      db.child(`contacts/${Id}`).set(state, (err) => {
         if (err) {
           toast.error(err);
         } else {
