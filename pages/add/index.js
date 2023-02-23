@@ -1,28 +1,8 @@
 import React, { useState } from "react";
-import db from "../../util/firebase";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
-export async function getServerSideProps() {
-  let records = [];
-
-  db.child("contacts").on("value", (snapshot) => {
-    if (snapshot.val() !== null) {
-      snapshot.forEach((childsnapshot) => {
-        let data = childsnapshot.val();
-        records.push(data);
-      });
-    }
-  });
-
-  return {
-    props: {
-      todos: records || null,
-    },
-  };
-}
-
-const Add = ({ todos }) => {
+const Add = () => {
   const initialState = {
     name: "",
     email: "",
@@ -45,15 +25,23 @@ const Add = ({ todos }) => {
     if (!name || !email || !contact || !status) {
       toast.error("Please provide value in each input field");
     } else {
-      db.child("contacts").push(state, (err) => {
-        if (err) {
-          toast.error(err);
-        } else {
-          toast.success("list added Successfully");
-        }
-      });
+      fetch("https://63f7496be8a73b486af48628.mockapi.io/contact", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
 
-      setTimeout(() => router.replace("/"), 500);
+        body: JSON.stringify(state),
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      toast.success("list added Successfully");
+      router.replace("/");
     }
   };
 

@@ -1,22 +1,23 @@
 import React, { useState } from "react";
-
-import db from "../../util/firebase";
 import { toast } from "react-toastify";
-
 import { useRouter } from "next/router";
 
 export async function getServerSideProps({ query }) {
-  let records = {};
-
-  db.child("contacts").on("value", (snapshot) => {
-    if (snapshot.val() !== null) {
-      records = { ...snapshot.val() };
+  const res = await fetch(
+    `https://63f7496be8a73b486af48628.mockapi.io/contact/${query.Id}`,
+    {
+      method: "GET",
+      headers: { "content-type": "application/json" },
+    }
+  ).then((res) => {
+    if (res.ok) {
+      return res.json();
     }
   });
 
   return {
     props: {
-      todos: records[query.Id] || null,
+      todos: res || null,
     },
   };
 }
@@ -36,8 +37,6 @@ const Update = ({ todos }) => {
 
   const { Id } = router.query;
 
-  console.log(Id);
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
@@ -49,15 +48,21 @@ const Update = ({ todos }) => {
     if (!name || !email || !contact || !status) {
       toast.error("Please provide value in each input field");
     } else {
-      db.child(`contacts/${Id}`).set(state, (err) => {
-        if (err) {
-          toast.error(err);
-        } else {
-          toast.success("list updated Successfully");
-        }
-      });
+      fetch(`https://63f7496be8a73b486af48628.mockapi.io/contact/${Id}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(state),
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
-      setTimeout(() => router.replace("/"), 500);
+      router.replace("/");
     }
   };
 

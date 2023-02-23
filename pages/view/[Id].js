@@ -1,21 +1,24 @@
 import { useRouter } from "next/router";
 import React from "react";
 import Link from "next/link";
-import db from "../../util/firebase";
 
 //page is created on run time not on build time
 export async function getServerSideProps({ query }) {
-  let records = {};
-
-  db.child("contacts").on("value", (snapshot) => {
-    if (snapshot.val() !== null) {
-      records = { ...snapshot.val() };
+  const res = await fetch(
+    `https://63f7496be8a73b486af48628.mockapi.io/contact/${query.Id}`,
+    {
+      method: "GET",
+      headers: { "content-type": "application/json" },
+    }
+  ).then((res) => {
+    if (res.ok) {
+      return res.json();
     }
   });
 
   return {
     props: {
-      contactDetails: records[query.Id] || null,
+      contactDetails: res || null,
     },
   };
 }
