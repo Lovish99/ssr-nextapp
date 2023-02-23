@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "public": "out",
+    "site": "next-ssr-96b73",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "nextServer"
+      }
+    ]
+  },
+  "function": {
+    "source": ".",
+    "runtime": "nodejs12"
+  }
+}

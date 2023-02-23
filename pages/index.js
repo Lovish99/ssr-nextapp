@@ -1,6 +1,6 @@
 import React from "react";
 import { ref, onValue, getDatabase } from "firebase/database";
-import db from "./firebase";
+import db from "../util/firebase";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { useState } from "react";

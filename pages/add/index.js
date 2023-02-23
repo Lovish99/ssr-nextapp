@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import db from "../firebase";
+import db from "../../util/firebase";
 import { ref, onValue, getDatabase } from "firebase/database";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
@@ -116,39 +116,6 @@ const Add = ({ todos }) => {
 
         <input type="submit" value="Save" />
       </form>
-
-      <style>
-        {`
-  input[type="text"],
-input[type="email"],
-input[type="number"],
-select {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0px;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-input[type="submit"] {
-  width: 100%;
-  background-color: #4caf50;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-input[type="submit"]:hover {
-  background-color: #45a049;
-}
-
-    `}
-      </style>
     </div>
   );
 };

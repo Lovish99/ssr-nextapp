@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ref, onValue, getDatabase } from "firebase/database";
 
-import db from "../firebase";
+import db from "../../util/firebase";
 import { toast } from "react-toastify";
 
 import { useRouter } from "next/router";

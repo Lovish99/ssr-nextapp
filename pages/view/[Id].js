@@ -3,7 +3,7 @@ import React from "react";
 import Link from "next/link";
 import { ref, onValue, getDatabase } from "firebase/database";
 
-import db from "../firebase";
+import db from "../../util/firebase";
 
 //page is created on run time not on build time
 export async function getServerSideProps({ query }) {

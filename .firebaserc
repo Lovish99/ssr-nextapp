@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "next-ssr-96b73",
+    "production": "next-ssr-96b73"
+  },
+  "targets": {},
+  "etags": {}
+}
