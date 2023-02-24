@@ -58,13 +58,18 @@ const Update = ({ todos }) => {
             return res.json();
           }
         })
+        .then(() => {
+          // setTimeout(() => {
+          router.replace("/");
+          // }, 1000);
+        })
         .catch((error) => {
           console.log(error);
         });
 
-      setTimeout(() => {
-        router.replace("/");
-      }, 1000);
+      // setTimeout(() => {
+      // router.replace("/");
+      // }, 1000);
     }
   };
 

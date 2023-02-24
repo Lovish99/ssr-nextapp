@@ -36,15 +36,16 @@ const Add = () => {
             return res.json();
           }
         })
+        .then(() => {
+          // setTimeout(() => {
+          router.replace("/");
+          // }, 1000);
+        })
         .catch((error) => {
           console.log(error);
         });
 
       toast.success("list added Successfully");
-
-      setTimeout(() => {
-        router.replace("/");
-      }, 1000);
     }
   };
 
