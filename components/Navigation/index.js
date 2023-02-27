@@ -1,9 +1,19 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useStore } from "@/client/context";
+import { getValue } from "@/utils/common";
+import { signOut } from "next-auth/react";
+import { authConstants } from "@/client/context/constant";
 
 const Navigation = (props) => {
   const [activeTab, setActiveTab] = useState("Home");
+
+  const [state, dispatch] = useStore();
+  const user = getValue(state, ["user"], null);
+
+  const authenticated = getValue(state, ["user", "authenticated"], false);
+
   const router = useRouter();
 
   return (
@@ -11,6 +21,19 @@ const Navigation = (props) => {
       <div className="header">
         <p className="logo"> Todo list</p>
         <div className="header-right">
+          {authenticated && (
+            <Link href={"/"}>
+              <p
+                className={`${activeTab === "Home" ? "active" : ""}`}
+                onClick={() => {
+                  setActiveTab("Home");
+                }}
+              >
+                {user.name}
+              </p>
+            </Link>
+          )}
+
           <Link href={"/"}>
             <p
               className={`${activeTab === "Home" ? "active" : ""}`}
@@ -21,16 +44,20 @@ const Navigation = (props) => {
               Home
             </p>
           </Link>
-          <Link href={"/add"}>
-            <p
-              className={`${activeTab === "AddContact" ? "active" : ""}`}
-              onClick={() => {
-                setActiveTab("AddContact");
-              }}
-            >
-              Add Todo
-            </p>
-          </Link>
+
+          {authenticated && (
+            <Link href={"/add"}>
+              <p
+                className={`${activeTab === "AddContact" ? "active" : ""}`}
+                onClick={() => {
+                  setActiveTab("AddContact");
+                }}
+              >
+                Add Todo
+              </p>
+            </Link>
+          )}
+
           <Link href={"/about"}>
             <p
               className={`${activeTab === "About" ? "active" : ""}`}
@@ -41,6 +68,45 @@ const Navigation = (props) => {
               About
             </p>
           </Link>
+
+          {authenticated ? (
+            // <Link
+
+            // >
+            <p
+              className={`${activeTab === "SignUp" ? "active" : ""}`}
+              onClick={() => {
+                signOut({ redirect: false }).then((res) => {
+                  dispatch({ type: authConstants.LOGIN_FAILURE });
+                });
+              }}
+            >
+              Logout
+            </p>
+          ) : (
+            <>
+              <Link href={"/signup"}>
+                <p
+                  className={`${activeTab === "SignUp" ? "active" : ""}`}
+                  onClick={() => {
+                    setActiveTab("SignUp");
+                  }}
+                >
+                  Sign Up
+                </p>
+              </Link>
+              <Link href={"/login"}>
+                <p
+                  className={`${activeTab === "Login" ? "active" : ""}`}
+                  onClick={() => {
+                    setActiveTab("Login");
+                  }}
+                >
+                  login
+                </p>
+              </Link>
+            </>
+          )}
         </div>
       </div>
 

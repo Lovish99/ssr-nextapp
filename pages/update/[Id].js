@@ -66,10 +66,6 @@ const Update = ({ todos }) => {
         .catch((error) => {
           console.log(error);
         });
-
-      // setTimeout(() => {
-      // router.replace("/");
-      // }, 1000);
     }
   };
 

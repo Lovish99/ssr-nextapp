@@ -2,6 +2,8 @@ import React from "react";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { useState } from "react";
+import { useStore } from "@/client/context";
+import { getValue } from "@/utils/common";
 
 export async function getServerSideProps() {
   const res = await fetch(
@@ -27,6 +29,10 @@ export default function Home({ todos }) {
   const [data, setData] = useState(todos);
 
   const [selected, setSelected] = useState("Please Select");
+
+  const [state, dispatch] = useStore();
+
+  const authenticated = getValue(state, ["user", "authenticated"], false);
 
   const handleChange = async (e) => {
     setSelected(e.target.value);
@@ -105,88 +111,96 @@ export default function Home({ todos }) {
 
   return (
     <div style={{ marginTop: "50px" }}>
-      <div
-        style={{
-          margin: "0 25%",
-        }}
-      >
-        <label>Sort By: </label>
-        <select
-          value={selected}
-          className="dropdown"
-          name="colValue"
-          onChange={handleChange}
-        >
-          <option>Please Select</option>
-          <option value="name">Name</option>
-          <option value="email">Email</option>
-          <option value="contact">Contact</option>
-          <option value="status">Status</option>
-        </select>
-        <button className="btn btn-reset" onClick={handleReset}>
-          Reset
-        </button>
-      </div>
-      <br />
-
-      {Object.keys(data).length === 0 ? (
-        <div
-          style={{
-            margin: "0 25%",
-          }}
-        >
-          <div style={{ margin: "20px 0px", fontSize: "40px" }}>
-            {" "}
-            No Todo Found
+      {authenticated ? (
+        <>
+          <div
+            style={{
+              margin: "0 25%",
+            }}
+          >
+            <label>Sort By: </label>
+            <select
+              value={selected}
+              className="dropdown"
+              name="colValue"
+              onChange={handleChange}
+            >
+              <option>Please Select</option>
+              <option value="name">Name</option>
+              <option value="email">Email</option>
+              <option value="contact">Contact</option>
+              <option value="status">Status</option>
+            </select>
+            <button className="btn btn-reset" onClick={handleReset}>
+              Reset
+            </button>
           </div>
-          <div> Please Click here to add ToDo</div>
-          <Link href={`/add`}>
-            <button className="btn btn-edit">Click Here</button>
-          </Link>
-        </div>
-      ) : (
-        <table style={{ marginTop: "20px" }} className="styled-table">
-          <thead>
-            <tr>
-              <th style={{ textAlign: "center" }}>No.</th>
-              <th style={{ textAlign: "center" }}>Name</th>
-              <th style={{ textAlign: "center" }}>Email</th>
-              <th style={{ textAlign: "center" }}>Contact</th>
-              <th style={{ textAlign: "center" }}>Status</th>
-              <th style={{ textAlign: "center" }}>Action</th>
-            </tr>
-          </thead>
+          <br />
 
-          <tbody>
-            {Object.keys(data).map((id, index) => {
-              return (
-                <tr key={data[id].id}>
-                  <th scope="row">{index + 1}</th>
-                  <td>{data[id].name}</td>
-                  <td>{data[id].email}</td>
-                  <td>{data[id].contact}</td>
-                  <td>{data[id].status}</td>
-                  <td>
-                    <Link href={`/update/${data[id].id}`}>
-                      <button className="btn btn-edit">Edit</button>
-                    </Link>
-                    <button
-                      className="btn btn-delete"
-                      onClick={() => {
-                        onDelete(data[id].id);
-                      }}
-                    >
-                      Delete
-                    </button>
-                    <Link href={`/view/${data[id].id}`}>
-                      <button className="btn btn-view">View</button>
-                    </Link>
-                  </td>
+          {Object.keys(data).length === 0 ? (
+            <div
+              style={{
+                margin: "0 25%",
+              }}
+            >
+              <div style={{ margin: "20px 0px", fontSize: "40px" }}>
+                {" "}
+                No Todo Found
+              </div>
+              <div> Please Click here to add ToDo</div>
+              <Link href={`/add`}>
+                <button className="btn btn-edit">Click Here</button>
+              </Link>
+            </div>
+          ) : (
+            <table style={{ marginTop: "20px" }} className="styled-table">
+              <thead>
+                <tr>
+                  <th style={{ textAlign: "center" }}>No.</th>
+                  <th style={{ textAlign: "center" }}>Name</th>
+                  <th style={{ textAlign: "center" }}>Email</th>
+                  <th style={{ textAlign: "center" }}>Contact</th>
+                  <th style={{ textAlign: "center" }}>Status</th>
+                  <th style={{ textAlign: "center" }}>Action</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              </thead>
+
+              <tbody>
+                {Object.keys(data).map((id, index) => {
+                  return (
+                    <tr key={data[id].id}>
+                      <th scope="row">{index + 1}</th>
+                      <td>{data[id].name}</td>
+                      <td>{data[id].email}</td>
+                      <td>{data[id].contact}</td>
+                      <td>{data[id].status}</td>
+                      <td>
+                        <Link href={`/update/${data[id].id}`}>
+                          <button className="btn btn-edit">Edit</button>
+                        </Link>
+                        <button
+                          className="btn btn-delete"
+                          onClick={() => {
+                            onDelete(data[id].id);
+                          }}
+                        >
+                          Delete
+                        </button>
+                        <Link href={`/view/${data[id].id}`}>
+                          <button className="btn btn-view">View</button>
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </>
+      ) : (
+        <div>
+          <h1>Welcome , Please Login</h1>
+        </div>
       )}
 
       <style>
