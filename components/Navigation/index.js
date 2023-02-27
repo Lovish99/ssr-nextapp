@@ -24,19 +24,19 @@ const Navigation = (props) => {
           {authenticated && (
             <Link href={"/"}>
               <p
-                className={`${activeTab === "Home" ? "active" : ""}`}
+                // className={`${activeTab === "Home" ? "active" : ""}`}
                 onClick={() => {
                   setActiveTab("Home");
                 }}
               >
-                {user.name}
+                Welcome {user.name}
               </p>
             </Link>
           )}
 
           <Link href={"/"}>
             <p
-              className={`${activeTab === "Home" ? "active" : ""}`}
+              // className={`${activeTab === "Home" ? "active" : ""}`}
               onClick={() => {
                 setActiveTab("Home");
               }}
@@ -74,7 +74,7 @@ const Navigation = (props) => {
 
             // >
             <p
-              className={`${activeTab === "SignUp" ? "active" : ""}`}
+              // className={`${activeTab === "SignUp" ? "active" : ""}`}
               onClick={() => {
                 signOut({ redirect: false }).then((res) => {
                   dispatch({ type: authConstants.LOGIN_FAILURE });
@@ -87,7 +87,7 @@ const Navigation = (props) => {
             <>
               <Link href={"/signup"}>
                 <p
-                  className={`${activeTab === "SignUp" ? "active" : ""}`}
+                  // className={`${activeTab === "SignUp" ? "active" : ""}`}
                   onClick={() => {
                     setActiveTab("SignUp");
                   }}
@@ -97,7 +97,7 @@ const Navigation = (props) => {
               </Link>
               <Link href={"/login"}>
                 <p
-                  className={`${activeTab === "Login" ? "active" : ""}`}
+                  // className={`${activeTab === "Login" ? "active" : ""}`}
                   onClick={() => {
                     setActiveTab("Login");
                   }}
